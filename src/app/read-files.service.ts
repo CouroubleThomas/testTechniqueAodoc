@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { RequestHeaders } from './auth';
+import { FilesResponse } from './files.model';
 
 
 @Injectable({
@@ -23,6 +24,6 @@ export class ReadFilesService {
       params: data
     };
 
-    return this.httpClient.get('https://content.googleapis.com/drive/v3/files', httpOptions);
+    return this.httpClient.get<FilesResponse>('https://content.googleapis.com/drive/v3/files', httpOptions);
   }
 }
