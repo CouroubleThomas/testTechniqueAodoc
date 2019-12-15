@@ -1,4 +1,4 @@
-<mat-spinner *ngIf="isLoading; else tabContent"></mat-spinner>
+<mat-spinner *ngIf="token && isLoading; else tabContent"></mat-spinner>
 
 <ng-template #tabContent>
   <table mat-table [dataSource]="dataSource">
@@ -39,6 +39,9 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
   
-  <mat-paginator [pageSizeOptions]="[25]" [length]="dataSource.data.length" showFirstLastButtons></mat-paginator>
+  <mat-paginator *ngIf="dataSource && dataSource.data.length > 0" [pageSizeOptions]="[25]" showFirstLastButtons></mat-paginator>
+
+  <button *ngIf="!isAllFileLoading; else loaderAllFiles" mat-button (click)="downloadAllSelectedFiles()">Download Selected Files</button>
+  <ng-template #loaderAllFiles><mat-spinner></mat-spinner></ng-template>
 
 </ng-template>

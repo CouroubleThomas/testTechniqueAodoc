@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { getRequestHeaders, RequestHeaders } from './auth';
-import { Observable, from } from 'rxjs';
+import { Observable, from, of, combineLatest } from 'rxjs';
 import { ReadFilesService } from './read-files.service';
 import { GoogleFile } from './files.model';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,6 +8,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import * as JSZip from 'jszip';
 import * as FileSaver from 'file-saver';
 import { MatSnackBar } from '@angular/material';
+import { switchMap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-root',
@@ -19,6 +21,7 @@ export class AppComponent implements OnInit {
   displayedColumns: string[] = ['Title', 'Modification Date', 'Thumbnail', 'Checked', 'Download'];
   isLoading = true;
   token: RequestHeaders;
+  isAllFileLoading = false;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
@@ -67,9 +70,36 @@ export class AppComponent implements OnInit {
       });
     }, error => {
       console.error(error);
-      this.snackBar.open('Je n\'arrive à ouvrir que des google docs !');
+      this.snackBar.open('Je n\'arrive à ouvrir que des google docs !', 'Fermer', {
+        duration: 2000,
+      });
       file.downloadLoading = false;
     });
+  }
 
+  downloadAllSelectedFiles() {
+    this.isAllFileLoading = true;
+    const zip = new JSZip();
+    const observables: Observable<void>[] = [];
+    this.dataSource.data.forEach(file => {
+      if (file.checked) {
+        observables.push(this.readFilesService.getGoogleFileContent(this.token, file).pipe(switchMap(result => {
+          zip.file(file.name + '.pdf', result, { binary: true });
+          return of(null);
+        })));
+      }
+    });
+    combineLatest(observables).subscribe(() => {
+      zip.generateAsync({ type: 'blob' }).then(content => {
+        FileSaver.saveAs(content, 'files.zip');
+        this.isAllFileLoading = false;
+      });
+    }, error => {
+      console.error(error);
+      this.snackBar.open('Je n\'arrive à ouvrir que des google docs !', 'Fermer', {
+        duration: 2000,
+      });
+      this.isAllFileLoading = false;
+    });
   }
 }
