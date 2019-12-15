@@ -34,6 +34,18 @@ export class AppComponent implements OnInit {
     window.open(url, '_blank');
   }
 
+  starFile(file: GoogleFile) {
+    file.starred = !file.starred;
+  }
+
+  starAllFilesSelected() {
+    this.dataSource.data.forEach(file => {
+      if(file.checked) {
+        file.starred = true;
+      }
+    });
+  }
+
   listDriveFile(): Observable<RequestHeaders> {
     const headers = from(getRequestHeaders());
     return headers;
