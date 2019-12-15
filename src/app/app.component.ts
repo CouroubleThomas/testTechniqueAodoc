@@ -8,7 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import * as JSZip from 'jszip';
 import * as FileSaver from 'file-saver';
 import { MatSnackBar } from '@angular/material';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, take } from 'rxjs/operators';
 
 
 @Component({
@@ -28,14 +28,17 @@ export class AppComponent implements OnInit {
   constructor(private readFilesService: ReadFilesService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
-    this.listDriveFile().subscribe(token => {
+    const observables: Observable<void>[] = [];
+    observables.push(this.listDriveFile().pipe(switchMap(token => {
       this.token = token;
-      this.readFilesService.readGoogleFiles(token).subscribe( response => {
+      return this.readFilesService.readGoogleFiles(token).pipe(switchMap(response => {
         this.dataSource = new MatTableDataSource<GoogleFile>(response.files);
         this.dataSource.paginator = this.paginator;
         this.isLoading = false;
-      });
-    });
+        return of(null);
+      }));
+    })));
+    combineLatest(observables).pipe(take(1)).subscribe();
   }
 
   openDoc(url: string) {
@@ -62,7 +65,7 @@ export class AppComponent implements OnInit {
   downloadSelectedFile(file: GoogleFile) {
     const zip = new JSZip();
     file.downloadLoading = true;
-    this.readFilesService.getGoogleFileContent(this.token, file).subscribe(result => {
+    this.readFilesService.getGoogleFileContent(this.token, file).pipe(take(1)).subscribe(result => {
       zip.file(file.name + '.pdf', result, { binary: true });
       zip.generateAsync({ type: 'blob' }).then(content => {
         FileSaver.saveAs(content, file.name + '.zip');
@@ -89,7 +92,7 @@ export class AppComponent implements OnInit {
         })));
       }
     });
-    combineLatest(observables).subscribe(() => {
+    combineLatest(observables).pipe(take(1)).subscribe(() => {
       zip.generateAsync({ type: 'blob' }).then(content => {
         FileSaver.saveAs(content, 'files.zip');
         this.isAllFileLoading = false;
