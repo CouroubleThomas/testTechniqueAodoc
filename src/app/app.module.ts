@@ -8,7 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinnerModule, MatCheckboxModule, MatIconModule, MatButtonModule } from '@angular/material';
+import { MatProgressSpinnerModule, MatCheckboxModule, MatIconModule, MatButtonModule, MatSnackBarModule } from '@angular/material';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
@@ -26,7 +26,8 @@ import { FormsModule } from '@angular/forms';
     MatCheckboxModule,
     FormsModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSnackBarModule
   ],
   providers: [ReadFilesService],
   bootstrap: [AppComponent]

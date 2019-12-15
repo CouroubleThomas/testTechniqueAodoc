@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { RequestHeaders } from './auth';
-import { FilesResponse } from './files.model';
+import { FilesResponse, GoogleFile } from './files.model';
 
 
 @Injectable({
@@ -25,5 +25,21 @@ export class ReadFilesService {
     };
 
     return this.httpClient.get<FilesResponse>('https://content.googleapis.com/drive/v3/files', httpOptions);
+  }
+
+  public getGoogleFileContent(token: RequestHeaders, file: GoogleFile) {
+    let data = new HttpParams();
+    data = data.set('mimeType', 'application/pdf');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  token['Content-Type'],
+        Authorization: token.Authorization,
+      }),
+      params: data,
+      responseType: 'blob' as 'json'
+    };
+
+    return this.httpClient.get<Blob>('https://content.googleapis.com/drive/v3/files/' + file.id + '/export', httpOptions);
   }
 }
