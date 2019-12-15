@@ -4,6 +4,9 @@ export interface GoogleFile {
     modifiedTime: Date;
     name: string;
     thumbnailLink: string;
+    webContentLink: string;
+    checked: boolean;
+    starred: boolean;
 }
 
 export interface FilesResponse {

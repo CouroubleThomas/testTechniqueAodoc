@@ -12,10 +12,8 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'aodoc-test';
-
   dataSource: MatTableDataSource<GoogleFile>;
-  displayedColumns: string[] = ['Title', 'Modification Date', 'Thumbnail'];
+  displayedColumns: string[] = ['Title', 'Modification Date', 'Thumbnail', 'Checked'];
   isLoading = true;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -30,6 +28,10 @@ export class AppComponent implements OnInit {
         this.isLoading = false;
       });
     });
+  }
+
+  openDoc(url: string) {
+    window.open(url, '_blank');
   }
 
   listDriveFile(): Observable<RequestHeaders> {

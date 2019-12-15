@@ -14,7 +14,7 @@ export class ReadFilesService {
   public readGoogleFiles(token: RequestHeaders) {
 
     let data = new HttpParams();
-    data = data.set('fields', 'files(id,mimeType,name,thumbnailLink,modifiedTime)');
+    data = data.set('fields', 'files(id,mimeType,name,thumbnailLink,modifiedTime,webContentLink)');
 
     const httpOptions = {
       headers: new HttpHeaders({
