@@ -23,9 +23,9 @@ export class AppComponent implements OnInit {
   token: RequestHeaders;
   isAllFileLoading = false;
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  constructor(private readFilesService: ReadFilesService, private snackBar: MatSnackBar) {}
+  constructor(private readFilesService: ReadFilesService, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     const observables: Observable<void>[] = [];
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
 
   starAllFilesSelected() {
     this.dataSource.data.forEach(file => {
-      if(file.checked) {
+      if (file.checked) {
         file.starred = true;
       }
     });
@@ -91,17 +91,25 @@ export class AppComponent implements OnInit {
         })));
       }
     });
-    combineLatest(observables).pipe(take(1)).subscribe(() => {
-      zip.generateAsync({ type: 'blob' }).then(content => {
-        FileSaver.saveAs(content, 'files.zip');
+    if (observables.length > 0) {
+      combineLatest(observables).pipe(take(1)).subscribe(() => {
+        zip.generateAsync({ type: 'blob' }).then(content => {
+          FileSaver.saveAs(content, 'files.zip');
+          this.isAllFileLoading = false;
+        });
+      }, error => {
+        console.error(error);
+        this.snackBar.open('Je n\'arrive à ouvrir que des google docs !', 'Fermer', {
+          duration: 2000,
+        });
         this.isAllFileLoading = false;
       });
-    }, error => {
-      console.error(error);
-      this.snackBar.open('Je n\'arrive à ouvrir que des google docs !', 'Fermer', {
+    } else {
+      this.snackBar.open('Aucun fichier sélectionné', 'Fermer', {
         duration: 2000,
       });
       this.isAllFileLoading = false;
-    });
+    }
+
   }
 }
