@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { getRequestHeaders, RequestHeaders } from './auth';
 import { Observable, from, of, combineLatest } from 'rxjs';
-import { ReadFilesService } from './read-files.service';
-import { GoogleFile } from './files.model';
+import { ReadFilesService } from './service/read-files.service';
+import { GoogleFile } from './model/files.model';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import * as JSZip from 'jszip';
@@ -58,8 +58,7 @@ export class AppComponent implements OnInit {
   }
 
   listDriveFile(): Observable<RequestHeaders> {
-    const headers = from(getRequestHeaders());
-    return headers;
+    return from(getRequestHeaders());
   }
 
   downloadSelectedFile(file: GoogleFile) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { RequestHeaders } from './auth';
-import { FilesResponse, GoogleFile } from './files.model';
+import { RequestHeaders } from '../auth';
+import { FilesResponse, GoogleFile } from '../model/files.model';
 
 
 @Injectable({
